@@ -5,7 +5,7 @@ import HR from './components/hr.jsx';
 import Employee from './components/employee.jsx';
 import Manager from './components/manager.jsx';
 import { useAuth } from './components/auth.jsx';
-
+import RequestForm from './components/requestForm.jsx';
 function AuthController({ children }) {
   const { user } = useAuth();
   return user ? children : <Navigate to="/login" replace />;
@@ -16,17 +16,20 @@ function App() {
     <div className="min-h-screen">
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/request" element={<AuthController><RequestForm /></AuthController>} />
         <Route path="/" element={
-          <AuthController>
-            <div className="container mx-auto p-8 max-w-7xl">
+          <div className="container mx-auto p-8 max-w-7xl">
+            {/* PAVVAN ADD THE NAVBAR COMPONENT CALL HERE */}
               <Routes>
-                <Route path="/HR" element={<HR />} />
-                <Route path="/employee" element={<Employee />} />
-                <Route path="/manager" element={<Manager />} />
-                <Route index element={<Navigate to="/employee" replace />} />
+                <Route path="/HR" element={<AuthController>
+                    <HR />
+                    </AuthController>}/>
+                <Route path="/employee" element={<AuthController><Employee /></AuthController>} />
+                <Route path="/manager" element={<AuthController><Manager /></AuthController>} />
+                
               </Routes>
-            </div>
-          </AuthController>
+        </div>
+         
         } />
       </Routes>
     </div>
