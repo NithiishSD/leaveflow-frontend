@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useState } from "react";
  
 const leaveTypes = [
@@ -33,14 +34,36 @@ export default function RequestForm() {
     return newErrors;
   };
  
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const validationErrors = validate();
+    setErrors({});
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
-    setErrors({});
-    setSubmitted(true);
+    try{
+        // Simulate API call
+        const leaveform={
+            leaveType,
+            startDate,
+            endDate,
+            reason,
+            fileName,
+            signature
+        };
+        const response=await axios.post("/api/leave-request", leaveform);   
+        if (response.status===200){
+                // Handle success (e.g., show notification)
+                setSubmitted(true);
+            
+            }else{
+                setErrors({ form: "Failed to submit request. Please try again." });
+            }
+    }catch(error){
+        // Handle error (e.g., show notification)
+        setErrors({ form: "Failed to submit request. Please try again." });
+    }
+    
   };
  
   const handleReset = () => {
@@ -178,7 +201,7 @@ export default function RequestForm() {
                 Supporting Documents
               </label>
               <label className="flex items-center gap-3 bg-stone-50 border border-stone-200 border-dashed rounded-xl px-4 py-4 cursor-pointer hover:bg-stone-100 transition">
-                <div className="w-8 h-8 bg-stone-200 rounded-lg flex items-center justify-center flex-shrink-0">
+                <div className="w-8 h-8 bg-stone-200 rounded-lg flex items-center justify-center shrink-0">
                   <svg className="w-4 h-4 text-stone-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
                   </svg>
@@ -282,9 +305,7 @@ export default function RequestForm() {
           </div>
         
  
-        <p className="text-center text-xs text-stone-400 mt-6">
-          Requests are reviewed within 2 business days.
-        </p>
+        
      </div>
   );
 }

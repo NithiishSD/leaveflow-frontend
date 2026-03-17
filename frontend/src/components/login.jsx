@@ -138,7 +138,7 @@ export default function Login(){
             className={`w-full py-4 rounded-2xl text-white font-bold text-lg transition-all shadow-xl transform hover:-translate-y-1 group ${
               isLoading 
                 ? 'bg-gray-400 cursor-not-allowed' 
-                : 'bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-700 hover:via-blue-800 hover:to-indigo-800'
+                : 'bg-linear-to-r from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-700 hover:via-blue-800 hover:to-indigo-800'
             }`}
           >
             <span className="flex items-center justify-center gap-2">

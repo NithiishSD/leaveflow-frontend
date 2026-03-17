@@ -16,7 +16,7 @@ function App() {
     <div className="min-h-screen">
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/request" element={<AuthController><RequestForm /></AuthController>} />
+        <Route path="/request" element={<RequestForm />} />
         <Route path="/" element={
           <div className="container mx-auto p-8 max-w-7xl">
             {/* PAVVAN ADD THE NAVBAR COMPONENT CALL HERE */}
