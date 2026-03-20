@@ -20,11 +20,11 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/requests" element={<RequestForm />} />
       <Route path="/manager" element={<ManagerDashboard />} />
-      <Route path="/HR" element={<AuthController><HR /></AuthController>} />
+      <Route path="/HR" element={<HR />} />
       <Route path="/employee" element={<AuthController><Employee /></AuthController>} />
       
       <Route path="/" element={<Login/>} />
-      <Route path = "requestlist" element = {<RequestHistory/>}/>
+      <Route path = "/requests-received" element = {<RequestHistory/>}/>
     </Routes>
   );
 }

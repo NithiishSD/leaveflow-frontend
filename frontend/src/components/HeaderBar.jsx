@@ -1,8 +1,14 @@
 import { useAuth } from "./auth.jsx";
 
 export default function HeaderBar({title="Dashboard"}){
-    var {user}=useAuth();
+    var {user,role}=useAuth();
     user=user?user:"john"
+    if (role=="manager"){
+      role="MR"
+    }
+    else if(role=="employee"){
+      role="EM"
+    }
     return (
         <div className=" bg-white h-[63px] flex items-center justify-between px-8 mb-10 rounded-[10px]">
         <div className="flex items-center">
@@ -29,7 +35,7 @@ export default function HeaderBar({title="Dashboard"}){
               className="absolute inset-0 flex items-center justify-center font-['Roboto:Medium',sans-serif] font-medium text-[16px] text-[#72323f] tracking-[0.1px]"
               style={{ fontVariationSettings: "'wdth' 100" }}
             >
-              HR
+              {role}
             </div>
           </div>
         </div>

@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from './auth.jsx';
 const Sidebar = ({name}) => {
   const navigate = useNavigate();
-  const {role}=useAuth()
+  var {role}=useAuth()
+  role="HR"
   const handleRequestReceived = () => {
     navigate('/requests-received');
   };
