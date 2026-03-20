@@ -30,15 +30,40 @@ export default function employee() {
     <main className="flex-1 bg-[#e0e0e0] shadow-sm px-10 py-4 md:px-12 overflow-y-auto gap-3">
       <HeaderBar title="Welcome HR" />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6">
-   
-   <StatsCard title="Pending Request" value="0" variant="white" />
-   <StatsCard title="Currently on leave" value="100" variant="gray" />
-   <StatsCard title="Approved this month" value="50" variant="white" />
-
-
-   <StatsCard title="New Request" value="20" variant="light-gray" />
+      <div className="mb-6">
+        <div className="flex gap-4 border-b border-gray-300">
+          <button
+            onClick={() => setActiveTab('activity')}
+            className={`pb-3 text-xl lg:text-[32px] font-medium transition-colors ${
+              activeTab === 'activity'
+                ? 'text-black border-b-2 border-black'
+                : 'text-[#7b7b7b]'
+            }`}
+          >
+            Leave Activity Tracker
+          </button>
+          <button
+            onClick={() => setActiveTab('summary')}
+            className={`pb-3 text-xl lg:text-[32px] font-medium transition-colors ${
+              activeTab === 'summary'
+                ? 'text-black border-b-2 border-black'
+                : 'text-[#7b7b7b]'
+            }`}
+          >
+            Remaining Leave Summary
+          </button>
+        </div>
+      </div>
+      {activeTab === 'activity' &&(<>
+   <StatsCard title="Total" value="0" variant="white" />
    <StatsCard title="Rejected" value="10" variant="gray" />
-   <StatsCard title="Returned" value="5" variant="light-gray" />
+   <StatsCard title="Pending Request" value="50" variant="white" />
+
+
+   <StatsCard title="Approved this month" value="20" variant="light-gray" />
+   <StatsCard title="Returned" value="10" variant="gray" /></>
+    )}
+    {activeTab === 'summary' &&(<div> </div>)}
    </div>
       </main>
       </div>
