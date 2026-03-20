@@ -6,7 +6,7 @@ import AuthProvider from './components/auth.jsx'
 import { LeaveProvider } from './components/LeaveContext.jsx'
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+  
     <BrowserRouter>
       <AuthProvider>
         <LeaveProvider>
@@ -14,5 +14,5 @@ createRoot(document.getElementById('root')).render(
         </LeaveProvider>
       </AuthProvider>
     </BrowserRouter>
-  </StrictMode>,
+  
 )

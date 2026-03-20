@@ -3,7 +3,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import Login from './components/login.jsx';
 import HR from './components/hr.jsx';
 import Employee from './components/employee.jsx';
-import Manager from './components/manager.jsx';
+
 import { useAuth } from './components/auth.jsx';
 import RequestForm from './components/requestForm.jsx';
 import ManagerDashboard from './Pages/ManagerDashboard.jsx';
@@ -18,12 +18,12 @@ function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
-      <Route path="/request" element={<AuthController><RequestForm /></AuthController>} />
+      <Route path="/request" element={<RequestForm />} />
       <Route path="/HR" element={<AuthController><HR /></AuthController>} />
       <Route path="/employee" element={<AuthController><Employee /></AuthController>} />
       <Route path="/manager" element={<ManagerDashboard />} />
       <Route path="/" element={<Navigate to="/manager" replace />} />
-      <Route path = "requesthist" element = {<RequestHistory/>}/>
+      <Route path = "requestlist" element = {<RequestHistory/>}/>
     </Routes>
   );
 }
