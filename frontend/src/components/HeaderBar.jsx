@@ -4,7 +4,7 @@ export default function HeaderBar({title="Dashboard"}){
     var {user}=useAuth();
     user=user?user:"john"
     return (
-        <div className=" bg-white h-[63px] flex items-center justify-between px-8 mb-10 ">
+        <div className=" bg-white h-[63px] flex items-center justify-between px-8 mb-10 rounded-[10px]">
         <div className="flex items-center">
           <h1 
             className="font-['Roboto:Medium',sans-serif] font-medium text-[22px] text-black tracking-[0.1px]"

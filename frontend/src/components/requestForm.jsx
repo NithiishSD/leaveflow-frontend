@@ -109,8 +109,8 @@ export default function RequestForm() {
     <div className="flex min-h-screen bg-[#e0e0e0] font-sans gap-4 flex-col md:flex-row">
     <Sidebar name = 'requests'/>
     
-    <main className="flex-1 bg-[#e0e0e0] shadow-sm p-10 md:p-12 overflow-y-auto gap-3">
-      <HeaderBar/>
+    <main className="flex-1 bg-[#e0e0e0] shadow-sm px-10 py-4 md:px-12 overflow-y-auto gap-3">
+      <HeaderBar title="Leave Request Form" />
             <div className=" bg-white p-6 rounded-2xl flex flex-col gap-6">
             {/* Leave Type */}
             <div>

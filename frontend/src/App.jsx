@@ -18,11 +18,12 @@ function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
-      <Route path="/request" element={<RequestForm />} />
+      <Route path="/requests" element={<RequestForm />} />
+      <Route path="/manager" element={<ManagerDashboard />} />
       <Route path="/HR" element={<AuthController><HR /></AuthController>} />
       <Route path="/employee" element={<AuthController><Employee /></AuthController>} />
-      <Route path="/manager" element={<ManagerDashboard />} />
-      <Route path="/" element={<Navigate to="/manager" replace />} />
+      
+      <Route path="/" element={<Login/>} />
       <Route path = "requestlist" element = {<RequestHistory/>}/>
     </Routes>
   );
