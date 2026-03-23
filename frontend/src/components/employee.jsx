@@ -1,14 +1,16 @@
-import { useEffect, useState,useNavigate } from "react";
+import { useEffect, useState } from "react";
 import Sidebar from "./Sidebar.jsx";
 
 import HeaderBar from "./HeaderBar.jsx";
-import RequestCard from "./RequestCard.jsx";
+
 
 import axios from "axios";
 import LeaveStatCard from "./LeaveStatCard.jsx";
 import { useAuth } from "./auth.jsx";
-import { useParams } from "react-router-dom";
-import RequestDetailsModal from "./RequestDetailsModal.jsx"
+import { useParams,useNavigate } from "react-router-dom";
+
+import { useLeave } from "./LeaveContext.jsx";
+import RequestDetailsModal from "./RequestDetailsModal.jsx";
 const CURRENT_EMPLOYEE = {
   id: "EMP001",
   name: "ALexa Emp",
@@ -53,11 +55,12 @@ function StatsCard({ title, value, variant = 'white' }) {
      requests,setRequests,
     search, setSearch,
     statusFilter, setStatusFilter,
-    page, setPage,color 
+    page, setPage,setrequestmodel,Setseeemployee
   }) {
-    const [requestmodel,setrequestmodel]=useState(false);
+    
     const PAGE_SIZE = 8;
-    const navigate=useNavigate();
+    const navigate= useNavigate();
+   
    
     const {user}=useAuth();;
     // Stat counts derived from live requests
@@ -67,6 +70,7 @@ function StatsCard({ title, value, variant = 'white' }) {
     // const rejected = requests.filter(r => r.status === "rejected").length;
     // const returned = requests.filter(r => r.status === "returned").length;
     // Filter
+
     const filtered = requests.filter(r =>
       r.type.toLowerCase().includes(search.toLowerCase()) &&
       (statusFilter === "" || r.status === statusFilter)
@@ -76,16 +80,18 @@ function StatsCard({ title, value, variant = 'white' }) {
     const safePage   = Math.min(page, totalPages);
     const slice      = filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
    
-    function handleDelete(reqId) {
+    function handleDelete(id) {
       if (window.confirm("Remove this leave request?")) {
-        setRequests(prev => prev.filter(r => r.reqId !== reqId));
+        setRequests(prev => prev.filter(r => r.id !== id));
         setPage(1);
       }
     }
    function seedetails(reqId){
     // Implement view details logic (e.g., open modal with request info)
-    setrequestmodel(prev=>!prev)
-   
+    setrequestmodel(prev=>!prev);
+    Setseeemployee([reqId,r]);
+  
+
   }
    function editrequest(reqid,status){
     if(status === "pending"){
@@ -335,13 +341,16 @@ export default function Employee() {
     const [search,setSearch]= useState("");
     const [statusFilter, setStatusFilter]= useState("");
     const [page,setPage] = useState(1);
-
+  const [seeemployee,Setseeemployee]=useState([]);
+  const { handleAction } = useLeave();
+  const [isOpen, setIsOpen] = useState(false);
+  const [requestmodel,setrequestmodel]=useState(false);
     const fetchRequests = async () => {
       try{
         
       
       const token = localStorage.getItem('token');
-      const res = await axios.get(`/requests/${id}`, {//check the api and give correct endpoint
+      const res = await axios.get(`/users/${id}`, {//check the api and give correct endpoint
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -418,11 +427,28 @@ export default function Employee() {
               setStatusFilter={setStatusFilter}
               page={page}
               setPage={setPage}
+              setrequestmodel={setrequestmodel}
+              Setseeemployee={Setseeemployee}
             />
           </div>
-          <div>
-            <RequestDetailsModal/>//we have to give correct values here
-          </div>
+            (seeemployee.length  && requestmodel &&
+
+              <RequestDetailsModal 
+                  req={seeemployee[1]}
+                  isOpen={isOpen}
+                  onClose={() => setIsOpen(false)}
+    onApprove={(seeemployee) => {
+      handleAction(seeemployee[0], 'approve');
+      setIsOpen(false);
+    }}
+    onReject={(seeemployee) => {
+      handleAction(seeemployee[0], 'deny');
+      setIsOpen(false);
+    }}
+    onReturn={(seeemployee) => {
+      handleAction(seeemployee[0], 'return');
+      setIsOpen(false);
+    }} /> )
         </main>
       </div>
     );
