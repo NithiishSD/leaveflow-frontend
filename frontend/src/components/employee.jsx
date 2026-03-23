@@ -43,7 +43,7 @@ function StatsCard({ title, value, variant = 'white' }) {
         <h3 className="text-md   text-black font-medium text-center ">
           {title}
         </h3>
-        <p className="text-2xl md:text-3xl text-black font-medium">
+        <p className="text-2xl md:text-3xl text-black font-bold tracking-[0.1px]">
           {value}
         </p>
       </div>

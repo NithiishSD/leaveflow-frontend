@@ -63,14 +63,14 @@ export default function Login(){
   };
 
   return (
-    <div className="min-h-screen w-full bg-blue-900 flex items-center justify-center p-4">
+    <div className="min-h-screen w-full bg-blue-900 flex items-center justify-center p-4 font-['Roboto:Medium',sans-serif]">
       <div className="w-full max-h-md max-w-md bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20">
         <div className="text-center p-8 border-b border-gray-100">
           <div className="inline-flex items-center justify-center w-20 h-20 bg-linear-to-r from-blue-600 to-indigo-600 rounded-3xl mb-6 shadow-lg">
             <CalendarDaysIcon className="w-10 h-10 text-white" />
           </div>
-          <h1 className="text-4xl font-bold bg-linear-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-1">LeaveFlow</h1>
-          <p className="text-gray-600 font-medium">
+          <h1 className="text-4xl font-bold bg-linear-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-1 tracking-[0.1px]">LeaveFlow</h1>
+          <p className="text-gray-600 font-medium tracking-[0.1px]">
             Leave requests made simple, secure, and transparent
           </p>
         </div>
@@ -78,12 +78,12 @@ export default function Login(){
         <form onSubmit={handleSubmit} className="p-8 space-y-3">
           {errors.form && (
             <div className="p-4 bg-red-50 border-2 border-red-200 rounded-2xl animate-pulse">
-              <p className="text-red-800 font-medium">{errors.form}</p>
+              <p className="text-red-800 font-medium tracking-[0.1px]">{errors.form}</p>
             </div>
           )}
           
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-3">Email or Employee ID</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-3 tracking-[0.1px]">Email or Employee ID</label>
             <input
               type="text"
               placeholder="Enter your email or employee ID"
@@ -93,12 +93,12 @@ export default function Login(){
               required
             />
             {errors.email && (
-              <p className="text-red-500 text-xs mt-2 font-medium">{errors.email}</p>
+              <p className="text-red-500 text-xs mt-2 font-medium tracking-[0.1px]">{errors.email}</p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-3">Password</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-3 tracking-[0.1px]">Password</label>
             <input
               type="password"
               placeholder="Enter your password"
@@ -108,12 +108,12 @@ export default function Login(){
               required
             />
             {errors.password && (
-              <p className="text-red-500 text-xs mt-2 font-medium">{errors.password}</p>
+              <p className="text-red-500 text-xs mt-2 font-medium tracking-[0.1px]">{errors.password}</p>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-3">Role</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-3 tracking-[0.1px]">Role</label>
             <select
               value={role}
               onChange={(e) => setRole(e.target.value)}

@@ -143,20 +143,20 @@ export default function RequestForm() {
  
   if (submitted) {
     return (
-      <div className="min-h-screen bg-stone-50 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-stone-50 flex items-center justify-center p-6 font-['Roboto:Medium',sans-serif]">
         <div className="bg-white border border-stone-200 rounded-2xl p-10 max-w-md w-full text-center shadow-sm">
           <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg className="w-8 h-8 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h2 className="text-xl font-semibold text-stone-800 mb-2">Request Submitted</h2>
-          <p className="text-stone-500 text-sm mb-6">
+          <h2 className="text-xl font-semibold text-stone-800 mb-2 tracking-[0.1px]">Request Submitted</h2>
+          <p className="text-stone-500 text-sm mb-6 font-medium tracking-[0.1px]">
             Your leave request has been received and is pending approval.
           </p>
           <button
             onClick={handleReset}
-            className="px-6 py-2.5 bg-stone-800 text-white text-sm font-medium rounded-lg hover:bg-stone-700 transition-colors"
+            className="px-6 py-2.5 bg-stone-800 text-white text-sm font-medium rounded-lg hover:bg-stone-700 transition-colors tracking-[0.1px]"
           >
             Submit Another
           </button>
@@ -167,7 +167,7 @@ export default function RequestForm() {
  
   return (
    
-    <div className="flex min-h-screen bg-[#e0e0e0] font-sans gap-4 flex-col md:flex-row">
+    <div className="flex min-h-screen bg-[#e0e0e0] font-['Roboto:Medium',sans-serif] gap-4 flex-col md:flex-row">
     <Sidebar name = 'requests'/>
     
     <main className="flex-1 bg-[#e0e0e0] shadow-sm px-10 py-4 md:px-12 overflow-y-auto gap-3">
@@ -175,7 +175,7 @@ export default function RequestForm() {
             <div className=" bg-white p-6 rounded-2xl flex flex-col gap-6">
             {/* Leave Type */}
             <div>
-              <label className="block text-xs font-semibold tracking-wide text-stone-500 uppercase mb-2">
+              <label className="block text-xs font-semibold tracking-[0.1px] text-stone-500 uppercase mb-2">
                 Leave Type
               </label>
               <div className="relative">
@@ -206,7 +206,7 @@ export default function RequestForm() {
             {/* Date Row */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
-                <label className="block text-xs font-semibold tracking-wide text-stone-500 uppercase mb-2">
+                <label className="block text-xs font-semibold tracking-[0.1px] text-stone-500 uppercase mb-2">
                   Start Date
                 </label>
                 <input
@@ -223,7 +223,7 @@ export default function RequestForm() {
                 {errors.startDate && <p className="text-xs text-red-500 mt-1">{errors.startDate}</p>}
               </div>
               <div>
-                <label className="block text-xs font-semibold tracking-wide text-stone-500 uppercase mb-2">
+                <label className="block text-xs font-semibold tracking-[0.1px] text-stone-500 uppercase mb-2">
                   End Date
                 </label>
                 <input
@@ -243,7 +243,7 @@ export default function RequestForm() {
  
             {/* Reason */}
             <div>
-              <label className="block text-xs font-semibold tracking-wide text-stone-500 uppercase mb-2">
+              <label className="block text-xs font-semibold tracking-[0.1px] text-stone-500 uppercase mb-2">
                 Reason
               </label>
               <textarea
@@ -263,7 +263,7 @@ export default function RequestForm() {
  
             {/* Supporting Documents */}
             <div>
-              <label className="block text-xs font-semibold tracking-wide text-stone-500 uppercase mb-2">
+              <label className="block text-xs font-semibold tracking-[0.1px] text-stone-500 uppercase mb-2">
                 Supporting Documents
               </label>
               <label className="flex items-center gap-3 bg-stone-50 border border-stone-200 border-dashed rounded-xl px-4 py-4 cursor-pointer hover:bg-stone-100 transition">
@@ -296,7 +296,7 @@ export default function RequestForm() {
               <svg className="w-4 h-4 text-stone-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
               </svg>
-              <h3 className="text-sm font-semibold text-stone-700">Digital Signature</h3>
+              <h3 className="text-sm font-semibold text-stone-700 tracking-[0.1px]">Digital Signature</h3>
             </div>
  
             {/* Confirmation Checkbox */}
@@ -333,7 +333,7 @@ export default function RequestForm() {
  
             {/* Signature Input */}
             <div>
-              <label className="block text-xs font-semibold tracking-wide text-stone-500 uppercase mb-2">
+              <label className="block text-xs font-semibold tracking-[0.1px] text-stone-500 uppercase mb-2">
                 Full Name as Signature
               </label>
               <input
