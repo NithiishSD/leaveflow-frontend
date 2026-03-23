@@ -14,7 +14,9 @@ export const LeaveProvider = ({ children }) => {
       end_date: '2026-04-05',
       reason: 'Family vacation',
       status: 'PENDING_MANAGER',
-      created_at: '2026-03-19T10:00:00Z'
+      created_at: '2026-03-19T10:00:00Z',
+      approval_events: [],
+      manager_id: null
     },
     {
       id: '2',
@@ -25,7 +27,9 @@ export const LeaveProvider = ({ children }) => {
       end_date: '2026-03-21',
       reason: 'Medical emergency',
       status: 'PENDING_MANAGER',
-      created_at: '2026-03-19T09:30:00Z'
+      created_at: '2026-03-19T09:30:00Z',
+      approval_events: [],
+      manager_id: null
     },
     {
       id: '3',
@@ -36,7 +40,19 @@ export const LeaveProvider = ({ children }) => {
       end_date: '2026-05-07',
       reason: 'Summer holidays',
       status: 'APPROVED',
-      created_at: '2026-03-18T14:20:00Z'
+      created_at: '2026-03-18T14:20:00Z',
+      approval_events: [
+        {
+          id: 'event-1',
+          request_id: '3',
+          actor_id: 'mgr-1',
+          actor: { id: 'mgr-1', name: 'Sarah Wilson', role: 'MANAGER' },
+          decision: 'APPROVED',
+          comment: 'Approved as per schedule',
+          created_at: '2026-03-18T15:00:00Z'
+        }
+      ],
+      manager_id: 'mgr-1'
     }
   ]);
   const [loading, setLoading] = useState(false);
@@ -80,9 +96,14 @@ export const LeaveProvider = ({ children }) => {
       await fetchRequests();
     } catch (err) {
       console.error("Action failed:", err);
-      setAllRequests(prev => prev.map(req => 
-        req.id === id ? { ...req, status } : req
-      ));
+      setAllRequests(prev => prev.map(req => {
+        if (req.id === id) {
+          const latestEvent = req.approval_events?.[req.approval_events.length - 1];
+          const manager_id = latestEvent?.actor_id || null;
+          return { ...req, status, manager_id };
+        }
+        return req;
+      }));
     }
   };
 
@@ -94,9 +115,18 @@ export const LeaveProvider = ({ children }) => {
         rejected:allRequests.filter(r => r.status === 'REJECTED').length,
         pending:allRequests.filter(r => r.status.includes('PENDING')).length,
       },
-      requests: allRequests.filter(r => r.status === 'PENDING_MANAGER'), 
+      requests: allRequests.filter(r => r.status === 'PENDING_MANAGER'),
+      allRequests: allRequests,
       handleAction, 
-      loading: false 
+      loading: false,
+      getRequestDetails: (id) => allRequests.find(r => r.id === id),
+      getManagerInfo: (managerId) => {
+        for (const req of allRequests) {
+          const event = req.approval_events?.find(e => e.actor_id === managerId);
+          if (event?.actor) return event.actor;
+        }
+        return null;
+      }
     }}>
       {children}
     </LeaveContext.Provider>

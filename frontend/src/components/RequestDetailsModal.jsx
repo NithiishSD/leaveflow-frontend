@@ -70,6 +70,19 @@ const RequestDetailsModal = ({ req, isOpen, onClose, onApprove, onReject, onRetu
             </div>
           </div>
 
+          {/* Manager Information (if approved/rejected) */}
+          {req.manager_id && (
+            <div className="border-2 border-blue-300 rounded-lg p-4 bg-blue-50">
+              <p className="text-gray-600 text-sm font-medium tracking-[0.1px] mb-2">Approved/Processed By Manager</p>
+              <p className="text-gray-900 font-bold text-lg tracking-[0.1px]">Manager ID: {req.manager_id}</p>
+              {req.approval_events && req.approval_events.length > 0 && (
+                <p className="text-gray-700 font-medium text-sm mt-2 tracking-[0.1px]">
+                  Name: {req.approval_events[req.approval_events.length - 1].actor?.name || 'N/A'}
+                </p>
+              )}
+            </div>
+          )}
+
           {/* Reason */}
           <div>
             <p className="text-gray-700 font-bold mb-2 tracking-[0.1px]">Reason</p>
@@ -98,22 +111,33 @@ const RequestDetailsModal = ({ req, isOpen, onClose, onApprove, onReject, onRetu
 
           {/* Comments History / Approval Events */}
           <div>
-            <p className="text-gray-700 font-bold mb-2 tracking-[0.1px]">Comments History</p>
+            <p className="text-gray-700 font-bold mb-2 tracking-[0.1px]">Approval Events & Comments</p>
             <div className="bg-gray-100 p-4 rounded-lg min-h-[100px]">
               {req.approval_events && req.approval_events.length > 0 ? (
                 <div className="space-y-3">
                   {req.approval_events.map((event, idx) => (
-                    <div key={idx} className="text-sm border-b border-gray-300 pb-2 last:border-b-0">
-                      <p className="font-bold text-gray-700 tracking-[0.1px]">{event.decision}</p>
-                      {event.comment && <p className="text-gray-600 font-medium tracking-[0.1px]">{event.comment}</p>}
-                      <p className="text-gray-500 text-xs mt-1 font-medium tracking-[0.1px]">
-                        {new Date(event.created_at).toLocaleDateString('en-GB')}
-                      </p>
+                    <div key={idx} className="text-sm border-b border-gray-300 pb-3 last:border-b-0">
+                      <div className="flex justify-between items-start mb-2">
+                        <div>
+                          <p className="font-bold text-gray-900 tracking-[0.1px]">{event.decision}</p>
+                          <p className="text-gray-700 font-medium text-xs mt-1 tracking-[0.1px]">
+                            Manager: {event.actor?.name || `ID: ${event.actor_id}`}
+                          </p>
+                        </div>
+                        <p className="text-gray-500 text-xs font-medium tracking-[0.1px]">
+                          {new Date(event.created_at).toLocaleDateString('en-GB')}
+                        </p>
+                      </div>
+                      {event.comment && (
+                        <p className="text-gray-600 font-medium text-xs mt-2 bg-white p-2 rounded tracking-[0.1px]">
+                          "{event.comment}"
+                        </p>
+                      )}
                     </div>
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-500 font-medium tracking-[0.1px]">No comments yet</p>
+                <p className="text-gray-500 font-medium tracking-[0.1px]">No approval events yet</p>
               )}
             </div>
           </div>
