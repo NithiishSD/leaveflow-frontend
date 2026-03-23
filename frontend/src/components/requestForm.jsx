@@ -86,7 +86,7 @@ export default function RequestForm() {
             fileName,
             signature
         };
-        const response=await axios.post("/api/leave-request", leaveform, {
+        const response=await axios.post("/requests", leaveform, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         });   
         if (response.status===200){
@@ -111,7 +111,7 @@ export default function RequestForm() {
             fileName,
             signature
         };
-        const response=await axios.put(`/api/leave-request/${id}`,leaveform,{//check the api and give correct endpoint
+        const response=await axios.put(`/requests/${id}`,leaveform,{//check the api and give correct endpoint
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         });
         if (response.status===200){

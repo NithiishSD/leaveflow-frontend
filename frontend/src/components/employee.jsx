@@ -341,7 +341,7 @@ export default function Employee() {
         
       
       const token = localStorage.getItem('token');
-      const res = await axios.get(`/api/employee/${id}`, {//check the api and give correct endpoint
+      const res = await axios.get(`/requests/${id}`, {//check the api and give correct endpoint
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -421,7 +421,7 @@ export default function Employee() {
             />
           </div>
           <div>
-            <RequestDetailsModal/>
+            <RequestDetailsModal/>//we have to give correct values here
           </div>
         </main>
       </div>
