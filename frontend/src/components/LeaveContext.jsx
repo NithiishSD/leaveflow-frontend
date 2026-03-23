@@ -59,7 +59,7 @@ export const LeaveProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    //fetchRequests();
+    fetchRequests();
   }, []);
 
   const stats = {
@@ -89,12 +89,12 @@ export const LeaveProvider = ({ children }) => {
   return (
     <LeaveContext.Provider value={{ 
       stats:{
-        total: 10,
-        newRequests:[],// allRequests.filter(r => r.status === 'PENDING_MANAGER').length,
-        rejected:[],//allRequests.filter(r => r.status === 'REJECTED').length,
-        pending:[]//allRequests.filter(r => r.status.includes('PENDING')).length,
+        total: allRequests.length,
+        newRequests:allRequests.filter(r => r.status === 'PENDING_MANAGER').length,
+        rejected:allRequests.filter(r => r.status === 'REJECTED').length,
+        pending:allRequests.filter(r => r.status.includes('PENDING')).length,
       },
-      requests:[],// allRequests.filter(r => r.status === 'PENDING_MANAGER'), 
+      requests: allRequests.filter(r => r.status === 'PENDING_MANAGER'), 
       handleAction, 
       loading: false 
     }}>

@@ -13,7 +13,7 @@ export default function HeaderBar({title="employee"}){
         <div className=" bg-white h-[63px] flex items-center justify-between px-8 mb-10 rounded-[10px]">
         <div className="flex items-center">
           <h1 
-            className="font-['Roboto:Medium',sans-serif] font-medium text-[22px] text-black tracking-[0.1px]"
+            className="font-['Roboto:Medium',sans-serif] font-bold text-[22px] text-black tracking-[0.1px]"
             style={{ fontVariationSettings: "'wdth' 100" }}
           >
             {title}
@@ -23,7 +23,7 @@ export default function HeaderBar({title="employee"}){
         <div className="flex items-center gap-4">
           <p 
             className="font-['Roboto:Medium',sans-serif] font-medium text-[22px] text-black tracking-[0.1px]"
-            style={{ fontVariationSettings: "'width' 100" }}
+            style={{ fontVariationSettings: "'wdth' 100" }}
           >
                 {user}
           </p>
