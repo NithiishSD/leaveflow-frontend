@@ -45,7 +45,7 @@ export default function Login(){
       login(token, username);
       setrole(role);
       if(role === "HR"){
-        navigate(`/HR/${userid}`);
+        navigate(`/HR/${userid}`);                        ///pavvan changes made here in route to uniquely indentify the each peason
       } else if(role === "Employee"){
         navigate(`/employee/${userid}`);
       } else if(role === "Manager"){
