@@ -1,8 +1,8 @@
 import React from 'react';
-
+import { useAuth } from './auth.jsx';
 const RequestDetailsModal = ({ req, isOpen, onClose, onApprove, onReject, onReturn }) => {
   if (!isOpen || !req) return null;
-
+  const {role} =useAuth();
   const formatDate = (dateString) => {
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString('en-US', options);
@@ -143,6 +143,7 @@ const RequestDetailsModal = ({ req, isOpen, onClose, onApprove, onReject, onRetu
           </div>
 
           {/* Action Buttons */}
+          {role !== 'employee' && (
           <div className="flex gap-3 pt-4 border-t border-gray-200">
             <button
               onClick={() => onApprove(req.id)}
@@ -162,7 +163,7 @@ const RequestDetailsModal = ({ req, isOpen, onClose, onApprove, onReject, onRetu
             >
               Return for fixes
             </button>
-          </div>
+          </div>)}
         </div>
       </div>
     </div>

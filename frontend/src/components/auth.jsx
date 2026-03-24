@@ -9,8 +9,8 @@ export default function AuthProvider({children}){
         return token?{token,username}:null
     
     })
-    const [role,setrole]=useState("");
-
+    const [role,setrole]=useState("employee");
+    
     function login(token,username){
         sessionStorage.setItem("token",token)
         sessionStorage.setItem("username",username)

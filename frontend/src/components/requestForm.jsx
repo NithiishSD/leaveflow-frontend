@@ -12,7 +12,20 @@ const leaveTypes = [
   "Unpaid Leave",
   "Compensatory Leave",
 ];
- 
+const INITIAL_MY_REQUESTS = [
+  { reqId: "REQ001", type: "Annual Leave",       start: "2026-01-06", end: "2026-01-10", days: 5,  status: "approved", reason: "Family vacation"         },
+  { reqId: "REQ002", type: "Sick Leave",         start: "2026-01-20", end: "2026-01-21", days: 2,  status: "approved", reason: "Fever & rest"             },
+  { reqId: "REQ003", type: "Casual Leave",       start: "2026-02-14", end: "2026-02-14", days: 1,  status: "rejected", reason: "Personal errand"          },
+  { reqId: "REQ004", type: "Annual Leave",       start: "2026-02-25", end: "2026-03-01", days: 5,  status: "approved", reason: "Travel"                   },
+  { reqId: "REQ005", type: "Sick Leave",         start: "2026-03-05", end: "2026-03-05", days: 1,  status: "returned", reason: "Medical appointment"      },
+  { reqId: "REQ006", type: "Casual Leave",       start: "2026-03-18", end: "2026-03-19", days: 2,  status: "pending",  reason: "Home renovation"          },
+  { reqId: "REQ007", type: "Annual Leave",       start: "2026-04-10", end: "2026-04-15", days: 6,  status: "pending",  reason: "Vacation"                 },
+  { reqId: "REQ008", type: "Maternity Leave",    start: "2026-05-01", end: "2026-07-29", days: 90, status: "pending",  reason: "Maternity"                },
+  { reqId: "REQ009", type: "Sick Leave",         start: "2026-01-12", end: "2026-01-12", days: 1,  status: "approved", reason: "Doctor visit"             },
+  { reqId: "REQ010", type: "Casual Leave",       start: "2026-02-03", end: "2026-02-03", days: 1,  status: "approved", reason: "Personal work"            },
+  { reqId: "REQ011", type: "Annual Leave",       start: "2026-03-28", end: "2026-03-29", days: 2,  status: "rejected", reason: "Weekend extension"        },
+  { reqId: "REQ012", type: "Compensatory Leave", start: "2026-04-22", end: "2026-04-22", days: 1,  status: "returned", reason: "Comp off for extra work"  },
+];
 export default function RequestForm() {
   const {id}=useParams()
   const [isedit, setIsEdit] = useState(Boolean(id));
@@ -50,7 +63,15 @@ export default function RequestForm() {
       };
 
       if (isedit) {
-        fetchRequestData();
+        const data=INITIAL_MY_REQUESTS.filter(r=>r.reqId===id)[0]  // Replace with actual API call when backend is ready
+        setLeaveType(data.type);
+            setStartDate(data.start);
+            setEndDate(data.end);
+            setReason(data.reason);
+            setFileName(data.fileName);
+            setConfirmed(data.confirmed);
+            setSignature(data.signature);
+       // fetchRequestData();
       }
     }, [id]);
 

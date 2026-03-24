@@ -19,6 +19,7 @@ function App() {
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/requests" element={<RequestForm />} />
+      <Route path="/edit-request/:id" element={<RequestForm />} />
       <Route path="/manager" element={<ManagerDashboard />} />
       <Route path="/HR" element={<HR />} />
       <Route path="/employee" element={<Employee />} />

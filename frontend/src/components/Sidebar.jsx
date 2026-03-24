@@ -4,7 +4,7 @@ import { useAuth } from './auth.jsx';
 const Sidebar = ({name}) => {
   const navigate = useNavigate();
   var {role}=useAuth()
-  role="manager"   //    !!!!!!!!!!!!!!!!!!!!!!!!!!! pavvan it is just for checking so that we can remove it later and use that when backend works
+  // role="employee"   //    !!!!!!!!!!!!!!!!!!!!!!!!!!! pavvan it is just for checking so that we can remove it later and use that when backend works
   const isActive = (pageName) => name === pageName;
   const activeClass = 'bg-[#d1d5db] font-bold text-gray-900 shadow-sm cursor-pointer';
   const inactiveClass = 'hover:bg-gray-200 text-gray-500 font-medium cursor-pointer';
@@ -25,10 +25,10 @@ const Sidebar = ({name}) => {
             <span className="text-lg leading-none">✉</span>
             <button onClick={() => {navigate('/requests')}}>Leave Request</button>
           </div>
-          <div className={`flex items-center gap-3 p-2.5 rounded-lg font-medium tracking-[0.1px] ${isActive('requests-received') ? activeClass : inactiveClass}`}>
+          {role!=="employee"&&(<div className={`flex items-center gap-3 p-2.5 rounded-lg font-medium tracking-[0.1px] ${isActive('requests-received') ? activeClass : inactiveClass}`}>
             <span className="text-lg leading-none">📄</span>
             <button onClick={()=>navigate('/requests-received')}>Requests</button>
-          </div>
+          </div>)}
         </div>
       </nav>
     </aside>
