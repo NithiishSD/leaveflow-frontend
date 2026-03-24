@@ -146,12 +146,12 @@ function StatsCard({ title, value, variant = 'white' }) {
               >
                 Reset
               </button>
-              <button
+              {/* <button
                 onClick={() => setPage(1)}
                 className="px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-colors"
               >
                 Apply
-              </button>
+              </button> */}
             </div>
           </div>
    
