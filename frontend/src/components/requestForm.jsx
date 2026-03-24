@@ -33,7 +33,7 @@ export default function RequestForm() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [reason, setReason] = useState("");
-  const [fileName, setFileName] = useState("");
+  const [fileNames, setFileNames] = useState([]);
   const [confirmed, setConfirmed] = useState(false);
   const [signature, setSignature] = useState("");
   const [submitted, setSubmitted] = useState(false);
@@ -51,7 +51,7 @@ export default function RequestForm() {
             setStartDate(data.startDate);
             setEndDate(data.endDate);
             setReason(data.reason);
-            setFileName(data.fileName);
+            setFileNames(Array.isArray(data.fileNames) ? data.fileNames : data.fileName ? [data.fileName] : []);
             setConfirmed(data.confirmed);
             setSignature(data.signature);
           } else {
@@ -68,7 +68,7 @@ export default function RequestForm() {
             setStartDate(data.start);
             setEndDate(data.end);
             setReason(data.reason);
-            setFileName(data.fileName);
+            setFileNames(Array.isArray(data.fileNames) ? data.fileNames : data.fileName ? [data.fileName] : []);
             setConfirmed(data.confirmed);
             setSignature(data.signature);
        // fetchRequestData();
@@ -104,7 +104,7 @@ export default function RequestForm() {
             startDate,
             endDate,
             reason,
-            fileName,
+            fileNames,
             signature
         };
         const response=await axios.post("/requests", leaveform, {
@@ -129,7 +129,7 @@ export default function RequestForm() {
             startDate,
             endDate,
             reason,
-            fileName,
+            fileNames,
             signature
         };
         const response=await axios.put(`/requests/${id}`,leaveform,{//check the api and give correct endpoint
@@ -155,7 +155,7 @@ export default function RequestForm() {
     setStartDate("");
     setEndDate("");
     setReason("");
-    setFileName("");
+    setFileNames([]);
     setConfirmed(false);
     setSignature("");
     setErrors({});
@@ -288,27 +288,35 @@ export default function RequestForm() {
                 Supporting Documents
               </label>
               <label className="flex items-center gap-3 bg-stone-50 border border-stone-200 border-dashed rounded-xl px-4 py-4 cursor-pointer hover:bg-stone-100 transition">
-                <div className="w-8 h-8 bg-stone-200 rounded-lg flex items-center justify-center shrink-0">
-                  <svg className="w-4 h-4 text-stone-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-                  </svg>
-                </div>
-                <div className="flex-1 min-w-0">
-                  {fileName ? (
-                    <p className="text-sm text-stone-700 truncate">{fileName}</p>
-                  ) : (
-                    <>
-                      <p className="text-sm text-stone-500">Click to upload documents</p>
-                      <p className="text-xs text-stone-400">PDF, PNG, JPG up to 10MB</p>
-                    </>
-                  )}
-                </div>
-                <input
-                  type="file"
-                  className="hidden"
-                  onChange={(e) => setFileName(e.target.files?.[0]?.name || "")}
-                />
-              </label>
+  <div className="w-8 h-8 bg-stone-200 rounded-lg flex items-center justify-center shrink-0">
+    <svg className="w-4 h-4 text-stone-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+    </svg>
+  </div>
+  <div className="flex-1 min-w-0">
+    {fileNames && fileNames.length > 0 ? (
+      <ul className="text-sm text-stone-700">
+        {fileNames.map((name, idx) => (
+          <li key={idx} className="truncate">{name}</li>
+        ))}
+      </ul>
+    ) : (
+      <>
+        <p className="text-sm text-stone-500">Click to upload documents</p>
+        <p className="text-xs text-stone-400">PDF, PNG, JPG up to 10MB</p>
+      </>
+    )}
+  </div>
+  <input
+    type="file"
+    className="hidden"
+    multiple
+    onChange={(e) => {
+      const files = Array.from(e.target.files || []);
+      setFileNames(files.map(f => f.name));
+    }}
+  />
+        </label>
             </div>
  
           {/* Digital Signature Section */}
