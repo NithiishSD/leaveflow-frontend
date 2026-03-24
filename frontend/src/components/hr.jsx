@@ -10,7 +10,7 @@ function StatsCard({ title, value, variant = 'white' }) {
     }[variant];
   
     return (
-      <div className={`${bgColor} rounded-xl md:rounded-[22px] p-5  shadow-sm flex flex-col items-center justify-center h-[60px] font-['Roboto:Medium',sans-serif]`}>
+      <div className={`${bgColor} rounded-xl md:rounded-[22px] p-5  shadow-sm flex flex-col items-center justify-center h-15 font-['Roboto:Medium',sans-serif]`}>
         <h3 className="text-md   text-black font-medium text-center tracking-[0.1px]">
           {title}
         </h3>
