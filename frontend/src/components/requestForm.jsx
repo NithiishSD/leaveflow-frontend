@@ -1,18 +1,27 @@
-import axios from "axios";
+import apiClient from "../api.js";
 import { useEffect, useState } from "react";
 import Sidebar from "./Sidebar.jsx";
 import HeaderBar from "./HeaderBar.jsx";  
 import { useParams } from "react-router-dom";
 
 const leaveTypes = [
-  "Annual Leave",
-  "Sick Leave",
-  "Casual Leave",
-  "Maternity / Paternity Leave",
-  "Unpaid Leave",
-  "Compensatory Leave",
+  { label: "Vacation", value: "VACATION" },
+  { label: "Emergency Leave", value: "EMERGENCY" },
 ];
- 
+const INITIAL_MY_REQUESTS = [
+  { reqId: "REQ001", type: "Annual Leave",       start: "2026-01-06", end: "2026-01-10", days: 5,  status: "approved", reason: "Family vacation"         },
+  { reqId: "REQ002", type: "Sick Leave",         start: "2026-01-20", end: "2026-01-21", days: 2,  status: "approved", reason: "Fever & rest"             },
+  { reqId: "REQ003", type: "Casual Leave",       start: "2026-02-14", end: "2026-02-14", days: 1,  status: "rejected", reason: "Personal errand"          },
+  { reqId: "REQ004", type: "Annual Leave",       start: "2026-02-25", end: "2026-03-01", days: 5,  status: "approved", reason: "Travel"                   },
+  { reqId: "REQ005", type: "Sick Leave",         start: "2026-03-05", end: "2026-03-05", days: 1,  status: "returned", reason: "Medical appointment"      },
+  { reqId: "REQ006", type: "Casual Leave",       start: "2026-03-18", end: "2026-03-19", days: 2,  status: "pending",  reason: "Home renovation"          },
+  { reqId: "REQ007", type: "Annual Leave",       start: "2026-04-10", end: "2026-04-15", days: 6,  status: "pending",  reason: "Vacation"                 },
+  { reqId: "REQ008", type: "Maternity Leave",    start: "2026-05-01", end: "2026-07-29", days: 90, status: "pending",  reason: "Maternity"                },
+  { reqId: "REQ009", type: "Sick Leave",         start: "2026-01-12", end: "2026-01-12", days: 1,  status: "approved", reason: "Doctor visit"             },
+  { reqId: "REQ010", type: "Casual Leave",       start: "2026-02-03", end: "2026-02-03", days: 1,  status: "approved", reason: "Personal work"            },
+  { reqId: "REQ011", type: "Annual Leave",       start: "2026-03-28", end: "2026-03-29", days: 2,  status: "rejected", reason: "Weekend extension"        },
+  { reqId: "REQ012", type: "Compensatory Leave", start: "2026-04-22", end: "2026-04-22", days: 1,  status: "returned", reason: "Comp off for extra work"  },
+];
 export default function RequestForm() {
   const {id}=useParams()
   const [isedit, setIsEdit] = useState(Boolean(id));
@@ -20,9 +29,11 @@ export default function RequestForm() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [reason, setReason] = useState("");
-  const [fileName, setFileName] = useState("");
+  const [fileNames, setFileNames] = useState([]);
+  const [files, setFiles] = useState([]);
   const [confirmed, setConfirmed] = useState(false);
   const [signature, setSignature] = useState("");
+  const [signatureFile, setSignatureFile] = useState(null);
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState({});
  
@@ -31,16 +42,16 @@ export default function RequestForm() {
     useEffect(() => {
       const fetchRequestData = async () => {
         try {
-          const response = await axios.get(`/api/requests/${id}`,{headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }});
+          const response = await apiClient.get(`/requests/${id}`,{headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }});
           if (response.status === 200) {
             const data = response.data;
             setLeaveType(data.type);
             setStartDate(data.start_date);
             setEndDate(data.end_date);
             setReason(data.reason);
-            setFileName(data.documents?.[0]?.filename || "");
-            setConfirmed(true);
-            setSignature(data.signatures?.[0]?.signature_filename || "");
+            setFileNames(Array.isArray(data.fileNames) ? data.fileNames : data.fileName ? [data.fileName] : []);
+            setConfirmed(data.confirmed);
+            setSignature(data.signature);
           } else {
             setErrors({ form: "Failed to load request data. Please try again." });
           }
@@ -50,6 +61,14 @@ export default function RequestForm() {
       };
 
       if (isedit) {
+        const data=INITIAL_MY_REQUESTS.filter(r=>r.reqId===id)[0]  // Replace with actual API call when backend is ready
+        setLeaveType(data.type);
+            setStartDate(data.start);
+            setEndDate(data.end);
+            setReason(data.reason);
+            setFileNames(Array.isArray(data.fileNames) ? data.fileNames : data.fileName ? [data.fileName] : []);
+            setConfirmed(data.confirmed);
+            setSignature(data.signature);
         fetchRequestData();
       }
     }, [id]);
@@ -65,6 +84,13 @@ export default function RequestForm() {
     if (!reason.trim()) newErrors.reason = "Please provide a reason.";
     if (!confirmed) newErrors.confirmed = "You must confirm the declaration.";
     if (!signature.trim()) newErrors.signature = "Signature is required.";
+    
+    // Additional validation for EMERGENCY leaves
+    if (leaveType === 'EMERGENCY') {
+      if (!files || files.length === 0) newErrors.files = "Document is required for Emergency Leave.";
+      if (!signatureFile) newErrors.signatureFile = "Signature file is required for Emergency Leave.";
+    }
+    
     return newErrors;
   };
  
@@ -75,64 +101,88 @@ export default function RequestForm() {
       setErrors(validationErrors);
       return;
     }
-    if(!isedit){
-    try{
-        // Simulate API call
-        const leaveform={
-            type: leaveType,
-            start_date: startDate,
-            end_date: endDate,
-            reason: reason
-        };
-        const response=await axios.post("/api/requests", leaveform, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-        });   
-        if (response.status===201 || response.status===200){
-                // Handle success (e.g., show notification)
-                setSubmitted(true);
-            
-            }else{
-                setErrors({ form: "Failed to submit request. Please try again." });
-            }
-    }catch(error){
-        // Handle error (e.g., show notification)
-        setErrors({ form: "Failed to submit request. Please try again." });
-    }
-  }
-  else{
-    try{
-        const leaveform={
-            type: leaveType,  
-            start_date: startDate,
-            end_date: endDate,
-            reason: reason
-        };
-        const response=await axios.patch(`/api/requests/${id}`,leaveform,{//check the api and give correct endpoint
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+    
+    if (!isedit) {
+      try {
+        // Create FormData for multipart file upload
+        const formData = new FormData();
+        formData.append('type', leaveType);
+        formData.append('start_date', startDate);
+        formData.append('end_date', endDate);
+        formData.append('reason', reason);
+        
+        // Add document files if any
+        files.forEach((file) => {
+          formData.append('documentFile', file);
         });
-        if (response.status===200){
-            // Handle success (e.g., show notification)
-            setSubmitted(true);
-        } else {
-            setErrors({ form: "Failed to update request. Please try again." });
+        
+        // Add signature file if EMERGENCY leave
+        if (leaveType === 'EMERGENCY' && signatureFile) {
+          formData.append('signatureFile', signatureFile);
         }
-    } catch (error) {
-        // Handle error (e.g., show notification)
-        setErrors({ form: "Failed to update request. Please try again." });
-    }
 
-  }
-  
-};
+        const response = await apiClient.post("/requests", formData, {
+          headers: { 
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        
+        if (response.status === 200 || response.status === 201) {
+          setSubmitted(true);
+        } else {
+          setErrors({ form: "Failed to submit request. Please try again." });
+        }
+      } catch (error) {
+        console.error('Error submitting request:', error);
+        setErrors({ form: error.response?.data?.message || "Failed to submit request. Please try again." });
+      }
+    } else {
+      try {
+        // For update, also use FormData to handle file changes
+        const formData = new FormData();
+        formData.append('type', leaveType);
+        formData.append('start_date', startDate);
+        formData.append('end_date', endDate);
+        formData.append('reason', reason);
+        
+        // Add new document files if any
+        files.forEach((file) => {
+          formData.append('documentFile', file);
+        });
+        
+        // Add signature file if provided
+        if (signatureFile) {
+          formData.append('signatureFile', signatureFile);
+        }
+
+        const response = await apiClient.put(`/requests/${id}`, formData, {
+          headers: { 
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        
+        if (response.status === 200) {
+          setSubmitted(true);
+        } else {
+          setErrors({ form: "Failed to update request. Please try again." });
+        }
+      } catch (error) {
+        console.error('Error updating request:', error);
+        setErrors({ form: error.response?.data?.message || "Failed to update request. Please try again." });
+      }
+    }
+  };
  
   const handleReset = () => {
     setLeaveType("");
     setStartDate("");
     setEndDate("");
     setReason("");
-    setFileName("");
+    setFileNames([]);
+    setFiles([]);
     setConfirmed(false);
     setSignature("");
+    setSignatureFile(null);
     setErrors({});
     setSubmitted(false);
   };
@@ -187,7 +237,7 @@ export default function RequestForm() {
                 >
                   <option value="" disabled>Select Leave Type</option>
                   {leaveTypes.map((type) => (
-                    <option key={type} value={type}>{type}</option>
+                    <option key={type.value} value={type.value}>{type.label}</option>
                   ))}
                 </select>
                 <div className="pointer-events-none absolute inset-y-0 right-4 flex items-center">
@@ -257,34 +307,45 @@ export default function RequestForm() {
               {errors.reason && <p className="text-xs text-red-500 mt-1">{errors.reason}</p>}
             </div>
  
-            {/* Supporting Documents */}
+            {/* Supporting Documents - Only for EMERGENCY */}
+            {leaveType === 'EMERGENCY' && (
             <div>
               <label className="block text-xs font-semibold tracking-[0.1px] text-stone-500 uppercase mb-2">
-                Supporting Documents
+                Supporting Documents <span className="text-red-500">*</span>
               </label>
               <label className="flex items-center gap-3 bg-stone-50 border border-stone-200 border-dashed rounded-xl px-4 py-4 cursor-pointer hover:bg-stone-100 transition">
-                <div className="w-8 h-8 bg-stone-200 rounded-lg flex items-center justify-center shrink-0">
-                  <svg className="w-4 h-4 text-stone-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
-                  </svg>
-                </div>
-                <div className="flex-1 min-w-0">
-                  {fileName ? (
-                    <p className="text-sm text-stone-700 truncate">{fileName}</p>
-                  ) : (
-                    <>
-                      <p className="text-sm text-stone-500">Click to upload documents</p>
-                      <p className="text-xs text-stone-400">PDF, PNG, JPG up to 10MB</p>
-                    </>
-                  )}
-                </div>
-                <input
-                  type="file"
-                  className="hidden"
-                  onChange={(e) => setFileName(e.target.files?.[0]?.name || "")}
-                />
-              </label>
+  <div className="w-8 h-8 bg-stone-200 rounded-lg flex items-center justify-center shrink-0">
+    <svg className="w-4 h-4 text-stone-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+    </svg>
+  </div>
+  <div className="flex-1 min-w-0">
+    {fileNames && fileNames.length > 0 ? (
+      <ul className="text-sm text-stone-700">
+        {fileNames.map((name, idx) => (
+          <li key={idx} className="truncate">{name}</li>
+        ))}
+      </ul>
+    ) : (
+      <>
+        <p className="text-sm text-stone-500">Click to upload documents</p>
+        <p className="text-xs text-stone-400">PDF, PNG, JPG up to 10MB</p>
+      </>
+    )}
+  </div>
+  <input
+    type="file"
+    className="hidden"
+    multiple
+    onChange={(e) => {
+      const fileList = Array.from(e.target.files || []);
+      setFileNames(fileList.map(f => f.name));
+      setFiles(fileList);
+    }}
+  />
+        </label>
             </div>
+            )}
  
           {/* Digital Signature Section */}
           <div className="border-t border-stone-100 bg-stone-50 px-8 py-6 space-y-5">
@@ -347,6 +408,41 @@ export default function RequestForm() {
               />
               {errors.signature && <p className="text-xs text-red-500 mt-1">{errors.signature}</p>}
             </div>
+
+            {/* Signature File Upload (for EMERGENCY requests only) */}
+            {leaveType === 'EMERGENCY' && (
+            <div>
+              <label className="block text-xs font-semibold tracking-[0.1px] text-stone-500 uppercase mb-2">
+                Digital Signature File <span className="text-red-500">*</span>
+              </label>
+              <label className="flex items-center gap-3 bg-stone-50 border border-stone-200 border-dashed rounded-xl px-4 py-4 cursor-pointer hover:bg-stone-100 transition">
+                <div className="w-8 h-8 bg-stone-200 rounded-lg flex items-center justify-center shrink-0">
+                  <svg className="w-4 h-4 text-stone-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
+                  </svg>
+                </div>
+                <div className="flex-1 min-w-0">
+                  {signatureFile ? (
+                    <p className="text-sm text-stone-700">{signatureFile.name}</p>
+                  ) : (
+                    <>
+                      <p className="text-sm text-stone-500">Click to upload signature</p>
+                      <p className="text-xs text-stone-400">PNG, JPG up to 5MB</p>
+                    </>
+                  )}
+                </div>
+                <input
+                  type="file"
+                  className="hidden"
+                  accept="image/*,.pdf"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    setSignatureFile(file || null);
+                  }}
+                />
+              </label>
+            </div>
+            )}
           </div>
  
           {/* Action Buttons */}

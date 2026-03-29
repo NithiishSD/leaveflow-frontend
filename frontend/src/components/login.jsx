@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAuth } from './auth.jsx';
 import { CalendarDaysIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import apiClient from '../api.js';
 
 export default function Login(){
   const [email, setEmail] = useState('');
@@ -36,13 +36,14 @@ export default function Login(){
 
     setIsLoading(true);
     try {
-      const response = await axios.post(`/api/auth/login`, {
+      const response = await apiClient.post(`/auth/login`, {
         email,
         password
         //role
       });
+
       const { access_token, user } = response.data;
-      login(access_token, user.name);
+      login(access_token, user.name, user.id, user.role);  // ← Pass id and role
       setrole(user.role);
       if(user.role === "HR"){
         navigate(`/HR/${user.id}`);                        ///pavvan changes made here in route to uniquely indentify the each peason

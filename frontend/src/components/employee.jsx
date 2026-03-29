@@ -4,7 +4,7 @@ import Sidebar from "./Sidebar.jsx";
 import HeaderBar from "./HeaderBar.jsx";
 
 
-import axios from "axios";
+import apiClient from "../api.js";
 import LeaveStatCard from "./LeaveStatCard.jsx";
 import { useAuth } from "./auth.jsx";
 import { useParams,useNavigate } from "react-router-dom";
@@ -82,23 +82,24 @@ function StatsCard({ title, value, variant = 'white' }) {
    
     function handleDelete(id) {
       if (window.confirm("Remove this leave request?")) {
-        setRequests(prev => prev.filter(r => r.id !== id));
+        setRequests(prev => prev.filter(r => r.reqId !== id));
         setPage(1);
       }
     }
    function seedetails(reqId){
     // Implement view details logic (e.g., open modal with request info)
     setrequestmodel(prev=>!prev);
-    Setseeemployee([reqId,r]);
-  
+    Setseeemployee([reqId,requests.find(r=>r.reqId === reqId)]);
+  console.log([reqId,requests.find(r=>r.id === reqId)]);
 
   }
-   function editrequest(reqid,status){
-    if(status === "pending"){
+   function editrequest(reqid){
+    
       // Implement edit logic (e.g., navigate to edit form)
+      
       setrequestmodel(false);
       navigate(`/edit-request/${reqid}`);
-    } 
+    
   }
     return (
       <div className="mt-20">
@@ -145,12 +146,12 @@ function StatsCard({ title, value, variant = 'white' }) {
               >
                 Reset
               </button>
-              <button
+              {/* <button
                 onClick={() => setPage(1)}
                 className="px-4 py-2 text-sm font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-colors"
               >
                 Apply
-              </button>
+              </button> */}
             </div>
           </div>
    
@@ -194,14 +195,14 @@ function StatsCard({ title, value, variant = 'white' }) {
                       <div className="flex gap-1.5">
                         <button
                           title="View"
-                          onClick={() =>seedetails(r.id)}//check the function 
+                          onClick={() =>seedetails(r.reqId)}//check the function 
                           className="w-7 h-7 rounded-lg bg-gray-100 text-gray-500 hover:bg-blue-600 hover:text-white transition-colors flex items-center justify-center"
                         >
                           <Icon.Eye />
                         </button>
                         <button
                           title={r.status !== "pending" ? "Only pending requests can be edited" : "Edit"}
-                          onClick={() => {editrequest(r.id)}}//check the function
+                          onClick={() => {editrequest(r.reqId)}}//check the function
                           className={`w-7 h-7 rounded-lg bg-gray-100 text-gray-500 transition-colors flex items-center justify-center ${r.status === "pending" ? "hover:bg-blue-600 hover:text-white" : "opacity-30 cursor-not-allowed"}`}
                         >
                           <Icon.Edit />
@@ -445,13 +446,11 @@ export default function Employee() {
               setrequestmodel={setrequestmodel}
               Setseeemployee={Setseeemployee}
             />
-          </div>
-            (seeemployee.length  && requestmodel &&
-
-              <RequestDetailsModal 
-                  req={seeemployee[1]}
-                  isOpen={isOpen}
-                  onClose={() => setIsOpen(false)}
+          </div>{
+            requestmodel && (<RequestDetailsModal 
+                  req={INITIAL_MY_REQUESTS.find(r => r.reqId === seeemployee[0])}
+                  isOpen={requestmodel}
+                  onClose={() => setrequestmodel(false)}
     onApprove={(seeemployee) => {
       handleAction(seeemployee[0], 'approve');
       setIsOpen(false);
@@ -463,7 +462,7 @@ export default function Employee() {
     onReturn={(seeemployee) => {
       handleAction(seeemployee[0], 'return');
       setIsOpen(false);
-    }} /> )
+    }} /> )}
         </main>
       </div>
     );
