@@ -2,7 +2,7 @@ import { useAuth } from "./auth.jsx";
 
 export default function HeaderBar({title="employee"}){
     var {user,role}=useAuth();
-    user=user?user:"john"
+    user.username=user?user.username:"john"
     if (role=="manager"){
       role="MR"
     }
@@ -21,12 +21,11 @@ export default function HeaderBar({title="employee"}){
         </div>
         
         <div className="flex items-center gap-4">
-          <p 
+          <h3
             className="font-['Roboto:Medium',sans-serif] font-medium text-[22px] text-black tracking-[0.1px]"
-            style={{ fontVariationSettings: "'wdth' 100" }}
-          >
-                {user}
-          </p>
+            style={{ fontVariationSettings: "'wdth' 100" }}>
+                {user.username}
+          </h3>
           <div className="h-[46px] w-[47px] relative">
             <svg className="absolute block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 67 66">
               <ellipse cx="33.5" cy="33" fill="#EADDFF" rx="33.5" ry="33" />

@@ -1,4 +1,4 @@
-import axios from "axios";
+import apiClient from "../api.js";
 import { useEffect, useState } from "react";
 import Sidebar from "./Sidebar.jsx";
 import HeaderBar from "./HeaderBar.jsx";  
@@ -44,7 +44,7 @@ export default function RequestForm() {
     useEffect(() => {
       const fetchRequestData = async () => {
         try {
-          const response = await axios.get(`/api/leave-request/${id}`,{headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }});
+          const response = await apiClient.get(`/api/leave-request/${id}`,{headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }});
           if (response.status === 200) {
             const data = response.data;
             setLeaveType(data.leaveType);
@@ -107,7 +107,7 @@ export default function RequestForm() {
             fileNames,
             signature
         };
-        const response=await axios.post("/requests", leaveform, {
+        const response=await apiClient.post("/requests", leaveform, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         });   
         if (response.status===200){
@@ -132,7 +132,7 @@ export default function RequestForm() {
             fileNames,
             signature
         };
-        const response=await axios.put(`/requests/${id}`,leaveform,{//check the api and give correct endpoint
+        const response=await apiClient.put(`/requests/${id}`,leaveform,{//check the api and give correct endpoint
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         });
         if (response.status===200){

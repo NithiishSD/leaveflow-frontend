@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from './auth.jsx';
 const Sidebar = ({name}) => {
   const navigate = useNavigate();
-  var {role}=useAuth()
+  var {role,user}=useAuth()
   // role="employee"   //    !!!!!!!!!!!!!!!!!!!!!!!!!!! pavvan it is just for checking so that we can remove it later and use that when backend works
   const isActive = (pageName) => name === pageName;
   const activeClass = 'bg-[#d1d5db] font-bold text-gray-900 shadow-sm cursor-pointer';
@@ -19,7 +19,7 @@ const Sidebar = ({name}) => {
         <div className="space-y-1">
           <div className={`flex items-center gap-3 p-2.5 rounded-lg font-medium tracking-[0.1px] ${isActive('dashboard') ? activeClass : inactiveClass}`}>
             <span className="text-lg leading-none">⊞</span>
-            <button onClick={() => navigate(`/${role}`)}>Dashboard</button>
+            <button onClick={() => navigate(`/${role}/${user.id}`)}>Dashboard</button>
           </div>
           <div className={`flex items-center gap-3 p-2.5 rounded-lg font-medium tracking-[0.1px] ${isActive('requests') ? activeClass : inactiveClass}`}>
             <span className="text-lg leading-none">✉</span>

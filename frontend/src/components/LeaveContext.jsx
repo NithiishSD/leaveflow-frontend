@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import axios from 'axios';
-
+import apiClient from '../api.js'; 
+import { useAuth } from './auth.jsx';
 const LeaveContext = createContext();
 
 export const LeaveProvider = ({ children }) => {
@@ -56,14 +56,14 @@ export const LeaveProvider = ({ children }) => {
     }
   ]);
   const [loading, setLoading] = useState(false);
-
-  const API_URL = '/api/requests';
+  const { user,role } = useAuth();
+  const API_URL = '/requests';
 
   const fetchRequests = async () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const res = await axios.get(API_URL, {
+      const res = await apiClient.get(API_URL, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setAllRequests(res.data);
@@ -77,19 +77,23 @@ export const LeaveProvider = ({ children }) => {
   useEffect(() => {
     fetchRequests();
   }, []);
-
+  
   const stats = {
     total: allRequests.length,
     newRequests: allRequests.filter(r => r.status === 'PENDING_MANAGER').length,
     rejected: allRequests.filter(r => r.status === 'REJECTED').length,
-    pending: allRequests.filter(r => r.status.includes('PENDING')).length,
+    
   };
-
+  if(role === "HR"){
+    stats.pending = allRequests.filter(r => r.status===('PENDING_HR')).length;
+  } else if(role === "MANAGER"){
+    stats.pending = allRequests.filter(r => r.status === 'PENDING_MANAGER').length;
+  }
   const handleAction = async (id, type) => {
     const status = type === 'approve' ? 'APPROVED' : type === 'deny' ? 'REJECTED' : 'RETURNED';
     const token = localStorage.getItem('token');
     try {
-      await axios.patch(`${API_URL}/${id}/manager`, 
+      await apiClient.patch(`${API_URL}/${id}/manager`, 
         { status }, 
         { headers: { Authorization: `Bearer ${token}` } }
       );

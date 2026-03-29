@@ -34,9 +34,9 @@ const RequestCard = ({ req }) => {
               {req.employee?.name || req.employee_id || "Employee"}
             </div>
             <div className="text-[10px] text-gray-500 font-medium tracking-[0.1px]">{createdDate}</div>
-            {req.manager_id && req.approval_events && req.approval_events.length > 0 && (
+            {req.id && req?.approval_events && req?.approval_events.length > 0 && (
               <div className="text-[9px] text-blue-600 font-medium tracking-[0.1px] mt-1">
-                ✓ Handled by: {req.approval_events[req.approval_events.length - 1].actor?.name || req.manager_id}
+                ✓ Handled by: {req?.approval_events[req?.approval_events.length - 1].actor?.name || req.id}
               </div>
             )}
           </div>

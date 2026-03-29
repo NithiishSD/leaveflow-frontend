@@ -4,7 +4,7 @@ import Sidebar from "./Sidebar.jsx";
 import HeaderBar from "./HeaderBar.jsx";
 
 
-import axios from "axios";
+import apiClient from "../api.js";
 import LeaveStatCard from "./LeaveStatCard.jsx";
 import { useAuth } from "./auth.jsx";
 import { useParams,useNavigate } from "react-router-dom";
@@ -351,7 +351,7 @@ export default function Employee() {
         
       
       const token = localStorage.getItem('token');
-      const res = await axios.get(`/users/${id}`, {//check the api and give correct endpoint
+      const res = await apiClient.get(`/users/${id}`, {//check the api and give correct endpoint
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -363,7 +363,7 @@ export default function Employee() {
       };
 
     useEffect(() => {
-      //fetchRequests();
+      fetchRequests();
       
     }, [id]);
 

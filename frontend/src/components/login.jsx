@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAuth } from './auth.jsx';
 import { CalendarDaysIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import apiClient from '../api.js';
 
 export default function Login(){
   const [email, setEmail] = useState('');
@@ -36,20 +36,21 @@ export default function Login(){
 
     setIsLoading(true);
     try {
-      const response = await axios.post(`/api/auth/login`, {
+      const response = await apiClient.post(`/auth/login`, {
         email,
         password,
         role
       });
-      const { token, username,userid } = response.data;
-      login(token, username);
+
+      const { access_token,user } = response.data;
+      login(access_token, user);
       setrole(role);
       if(role === "HR"){
-        navigate(`/HR/${userid}`);                        ///pavvan changes made here in route to uniquely indentify the each peason
-      } else if(role === "Employee"){
-        navigate(`/employee/${userid}`);
-      } else if(role === "Manager"){
-        navigate(`/manager/${userid}`);
+        navigate(`/HR/${user.id}`);                        ///pavvan changes made here in route to uniquely indentify the each peason
+      } else if(role === "EMPLOYEE"){
+        navigate(`/employee/${user.id}`);
+      } else if(role === "MANAGER"){
+        navigate(`/manager/${user.id}`);
       }
     } catch (error) {
       if (error.response && error.response.data && error.response.data.message) {
