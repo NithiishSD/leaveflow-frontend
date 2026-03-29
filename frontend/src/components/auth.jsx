@@ -4,21 +4,24 @@ const Authcontext=createContext()
 
 export default function AuthProvider({children}){
     const [user,setUser]=useState(()=>{
-        const token=sessionStorage.getItem("token")
+        
         const username=sessionStorage.getItem("username")
-        return token?{token,username}:null
+        const id=sessionStorage.getItem("id")
+        return id?{username,id}:null
     
     })
-    const [role,setrole]=useState("employee");
+    const [role,setrole]=useState("");
     
-    function login(token,username){
-        sessionStorage.setItem("token",token)
-        sessionStorage.setItem("username",username)
-setUser({ token, username })
+    function login(token,user){
+        localStorage.setItem("token",token)
+        localStorage.setItem("username",user.name)
+        sessionStorage.setItem("id",user.id)
+        setUser({ id: user.id, username: user.name })
     }
     function logout(){
-        sessionStorage.removeItem("token")
-        sessionStorage.removeItem("username")
+        localStorage.removeItem("token")
+        localStorage.removeItem("username")
+        sessionStorage.removeItem("id")
     }
 
     return (
