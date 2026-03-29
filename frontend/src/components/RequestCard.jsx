@@ -31,7 +31,7 @@ const RequestCard = ({ req }) => {
           <div className={`w-8 h-8 rounded-full ${getDotColor(req.type)}`} />
           <div className="leading-tight">
             <div className="text-sm font-medium text-gray-800 tracking-[0.1px]">
-              {req.employee?.name || req.employee_id || "Employee"}
+              {req?.name || req.employee_id || "Employee"}
             </div>
             <div className="text-[10px] text-gray-500 font-medium tracking-[0.1px]">{createdDate}</div>
             {req.id && req?.approval_events && req?.approval_events.length > 0 && (
