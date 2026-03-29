@@ -18,14 +18,14 @@ function App() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
-      <Route path="/requests" element={<RequestForm />} />
-      <Route path="/edit-request/:id" element={<RequestForm />} />
-      <Route path="/manager" element={<ManagerDashboard />} />
-      <Route path="/HR" element={<HR />} />
-      <Route path="/employee" element={<Employee />} />
-      
+      <Route path="/requests" element={<AuthController><RequestForm /></AuthController>} />
+      <Route path="/edit-request/:id" element={<AuthController><RequestForm /></AuthController>} />
+      <Route path="/manager/:id" element={<AuthController><ManagerDashboard /></AuthController>} />
+      <Route path="/HR/:id" element={<AuthController><HR /></AuthController>} />
+      <Route path="/employee/:id" element={<AuthController><Employee /></AuthController>} />
+
       <Route path="/" element={<Login/>} />
-      <Route path = "/requests-received" element = {<RequestHistory/>}/>
+      <Route path = "/requests-received" element = {<AuthController><RequestHistory /></AuthController>}/>
     </Routes>
   );
 }
