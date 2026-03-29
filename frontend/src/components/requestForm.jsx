@@ -31,16 +31,16 @@ export default function RequestForm() {
     useEffect(() => {
       const fetchRequestData = async () => {
         try {
-          const response = await axios.get(`/api/leave-request/${id}`,{headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }});
+          const response = await axios.get(`/api/requests/${id}`,{headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }});
           if (response.status === 200) {
             const data = response.data;
-            setLeaveType(data.leaveType);
-            setStartDate(data.startDate);
-            setEndDate(data.endDate);
+            setLeaveType(data.type);
+            setStartDate(data.start_date);
+            setEndDate(data.end_date);
             setReason(data.reason);
-            setFileName(data.fileName);
-            setConfirmed(data.confirmed);
-            setSignature(data.signature);
+            setFileName(data.documents?.[0]?.filename || "");
+            setConfirmed(true);
+            setSignature(data.signatures?.[0]?.signature_filename || "");
           } else {
             setErrors({ form: "Failed to load request data. Please try again." });
           }
@@ -79,17 +79,15 @@ export default function RequestForm() {
     try{
         // Simulate API call
         const leaveform={
-            leaveType,
-            startDate,
-            endDate,
-            reason,
-            fileName,
-            signature
+            type: leaveType,
+            start_date: startDate,
+            end_date: endDate,
+            reason: reason
         };
-        const response=await axios.post("/requests", leaveform, {
+        const response=await axios.post("/api/requests", leaveform, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         });   
-        if (response.status===200){
+        if (response.status===201 || response.status===200){
                 // Handle success (e.g., show notification)
                 setSubmitted(true);
             
@@ -104,14 +102,12 @@ export default function RequestForm() {
   else{
     try{
         const leaveform={
-            leaveType,  
-            startDate,
-            endDate,
-            reason,
-            fileName,
-            signature
+            type: leaveType,  
+            start_date: startDate,
+            end_date: endDate,
+            reason: reason
         };
-        const response=await axios.put(`/requests/${id}`,leaveform,{//check the api and give correct endpoint
+        const response=await axios.patch(`/api/requests/${id}`,leaveform,{//check the api and give correct endpoint
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
         });
         if (response.status===200){

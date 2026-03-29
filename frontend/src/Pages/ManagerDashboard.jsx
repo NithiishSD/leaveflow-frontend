@@ -13,7 +13,7 @@ const ManagerDashboard = () => {
       <Sidebar name = 'dashboard'/>
       
       <main className="flex-1 px-4 md:px-6 py-4 md:py-6 overflow-y-auto">
-        <HeaderBar/>
+        <HeaderBar title = 'Dashboard'/>
 
         <section className="mt-6 bg-white rounded-2xl shadow-sm p-8">
           <h2 className="text-xl font-bold text-gray-900 tracking-[0.1px] mb-2">Leave Requests</h2>

@@ -38,18 +38,18 @@ export default function Login(){
     try {
       const response = await axios.post(`/api/auth/login`, {
         email,
-        password,
-        role
+        password
+        //role
       });
-      const { token, username,userid } = response.data;
-      login(token, username);
-      setrole(role);
-      if(role === "HR"){
-        navigate(`/HR/${userid}`);                        ///pavvan changes made here in route to uniquely indentify the each peason
-      } else if(role === "Employee"){
-        navigate(`/employee/${userid}`);
-      } else if(role === "Manager"){
-        navigate(`/manager/${userid}`);
+      const { access_token, user } = response.data;
+      login(access_token, user.name);
+      setrole(user.role);
+      if(user.role === "HR"){
+        navigate(`/HR/${user.id}`);                        ///pavvan changes made here in route to uniquely indentify the each peason
+      } else if(user.role === "EMPLOYEE"){
+        navigate(`/employee/${user.id}`);
+      } else if(user.role === "MANAGER"){
+        navigate(`/manager/${user.id}`);
       }
     } catch (error) {
       if (error.response && error.response.data && error.response.data.message) {

@@ -188,16 +188,11 @@ export default function RequestHistory(){
                                     </tr>
                                 ) : (
                                     filteredRequests.map((req) => (
-                                        <tr 
-                                            key={req.id} 
-                                            className={`hover:bg-gray-50 transition-colors cursor-pointer ${
+                                        <tr key={req.id} className={`hover:bg-gray-50 transition-colors cursor-pointer ${
                                                 selectedRows.has(req.id) ? 'bg-blue-50' : ''
-                                            }`}
-                                            onClick={() => {
+                                            }`} onClick={() => {
                                                 setSelectedRequest(req);
-                                                setIsDetailsOpen(true);
-                                            }}
-                                        >
+                                                setIsDetailsOpen(true);}}>
                                             <td className="px-4 py-4 text-sm text-gray-600 font-medium tracking-[0.1px]" onClick={(e) => e.stopPropagation()}>
                                                 <input 
                                                     type="checkbox" 
