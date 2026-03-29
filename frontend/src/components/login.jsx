@@ -38,18 +38,18 @@ export default function Login(){
     try {
       const response = await apiClient.post(`/auth/login`, {
         email,
-        password,
-        role
+        password
+        //role
       });
 
-      const { access_token,user } = response.data;
-      login(access_token, user);
-      setrole(role);
-      if(role === "HR"){
+      const { access_token, user } = response.data;
+      login(access_token, user.name, user.id, user.role);  // ← Pass id and role
+      setrole(user.role);
+      if(user.role === "HR"){
         navigate(`/HR/${user.id}`);                        ///pavvan changes made here in route to uniquely indentify the each peason
-      } else if(role === "EMPLOYEE"){
+      } else if(user.role === "EMPLOYEE"){
         navigate(`/employee/${user.id}`);
-      } else if(role === "MANAGER"){
+      } else if(user.role === "MANAGER"){
         navigate(`/manager/${user.id}`);
       }
     } catch (error) {

@@ -346,16 +346,31 @@ export default function Employee() {
   const { handleAction } = useLeave();
   const [isOpen, setIsOpen] = useState(false);
   const [requestmodel,setrequestmodel]=useState(false);
+  
+  const calculateDays = (startDate, endDate) => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    return Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+  };
+  
+  const transformRequest = (req) => ({
+    id: req.id,
+    reqId: req.id,
+    type: req.type === 'VACATION' ? 'Annual Leave' : req.type === 'EMERGENCY' ? 'Emergency Leave' : req.type,
+    start: new Date(req.start_date).toISOString().split('T')[0],
+    end: new Date(req.end_date).toISOString().split('T')[0],
+    days: calculateDays(req.start_date, req.end_date),
+    status: req.status.toLowerCase().replace('_', ' '),
+    reason: req.reason
+  });
+
     const fetchRequests = async () => {
       try{
-        
-      
       const token = localStorage.getItem('token');
-      const res = await apiClient.get(`/users/${id}`, {//check the api and give correct endpoint
+      const res = await axios.get(`/api/requests`, {//check the api and give correct endpoint
         headers: { Authorization: `Bearer ${token}` }
       });
-
-          setRequests(res.data);
+          setRequests(res.data.map(transformRequest));
         }catch(err){
           console.error("Fetch failed ", err);
           setRequests([]);
