@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from './auth.jsx';
 const Sidebar = ({name}) => {
   const navigate = useNavigate();
-  var {role,user}=useAuth()
+  const  {role,user}=useAuth()
   // role="employee"   //    !!!!!!!!!!!!!!!!!!!!!!!!!!! pavvan it is just for checking so that we can remove it later and use that when backend works
   const isActive = (pageName) => name === pageName;
   const activeClass = 'bg-[#d1d5db] font-bold text-gray-900 shadow-sm cursor-pointer';
