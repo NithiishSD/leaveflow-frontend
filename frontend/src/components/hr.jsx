@@ -93,12 +93,13 @@ export default function HR() {
       rejected: 0,
       returned: 0
     });
-    const  loading=[] 
-    
+    const [loading, setLoading] = useState(false);
+
     async function fetchData() {
       const token = localStorage.getItem('token');
       
         try {
+          setLoading(true);
           const response = await apiClient.get('/requests', {
             headers: {
               Authorization: `Bearer ${token}`
@@ -111,6 +112,8 @@ export default function HR() {
           console.log('Calculated stats:', calculatedStats);
         } catch (error) {
           console.log('Error fetching HR dashboard data:', error);
+        } finally {
+          setLoading(false);
         }
       }
       useEffect(() => {
