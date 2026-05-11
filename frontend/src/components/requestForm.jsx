@@ -5,12 +5,8 @@ import HeaderBar from "./HeaderBar.jsx";
 import { useParams } from "react-router-dom";
 
 const leaveTypes = [
-  { label: "Annual Leave", value: "VACATION" },
-  { label: "Sick Leave", value: "SICK" },
-  { label: "Casual Leave", value: "CASUAL" },
-  { label: "Maternity / Paternity Leave", value: "MATERNITY" },
-  { label: "Unpaid Leave", value: "UNPAID" },
-  { label: "Compensatory Leave", value: "COMPENSATORY" },
+  { label: "Vacation", value: "VACATION" },
+  { label: "Emergency Leave", value: "EMERGENCY" },
 ];
 const INITIAL_MY_REQUESTS = [
   { reqId: "REQ001", type: "Annual Leave",       start: "2026-01-06", end: "2026-01-10", days: 5,  status: "approved", reason: "Family vacation"         },
@@ -49,9 +45,9 @@ export default function RequestForm() {
           const response = await apiClient.get(`/requests/${id}`,{headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }});
           if (response.status === 200) {
             const data = response.data;
-            setLeaveType(data.leaveType);
-            setStartDate(data.startDate);
-            setEndDate(data.endDate);
+            setLeaveType(data.type);
+            setStartDate(data.start_date);
+            setEndDate(data.end_date);
             setReason(data.reason);
             setFileNames(Array.isArray(data.fileNames) ? data.fileNames : data.fileName ? [data.fileName] : []);
             setConfirmed(data.confirmed);
@@ -88,6 +84,13 @@ export default function RequestForm() {
     if (!reason.trim()) newErrors.reason = "Please provide a reason.";
     if (!confirmed) newErrors.confirmed = "You must confirm the declaration.";
     if (!signature.trim()) newErrors.signature = "Signature is required.";
+    
+    // Additional validation for EMERGENCY leaves
+    if (leaveType === 'EMERGENCY') {
+      if (!files || files.length === 0) newErrors.files = "Document is required for Emergency Leave.";
+      if (!signatureFile) newErrors.signatureFile = "Signature file is required for Emergency Leave.";
+    }
+    
     return newErrors;
   };
  
@@ -304,10 +307,11 @@ export default function RequestForm() {
               {errors.reason && <p className="text-xs text-red-500 mt-1">{errors.reason}</p>}
             </div>
  
-            {/* Supporting Documents */}
+            {/* Supporting Documents - Only for EMERGENCY */}
+            {leaveType === 'EMERGENCY' && (
             <div>
               <label className="block text-xs font-semibold tracking-[0.1px] text-stone-500 uppercase mb-2">
-                Supporting Documents
+                Supporting Documents <span className="text-red-500">*</span>
               </label>
               <label className="flex items-center gap-3 bg-stone-50 border border-stone-200 border-dashed rounded-xl px-4 py-4 cursor-pointer hover:bg-stone-100 transition">
   <div className="w-8 h-8 bg-stone-200 rounded-lg flex items-center justify-center shrink-0">
@@ -341,6 +345,7 @@ export default function RequestForm() {
   />
         </label>
             </div>
+            )}
  
           {/* Digital Signature Section */}
           <div className="border-t border-stone-100 bg-stone-50 px-8 py-6 space-y-5">
@@ -404,10 +409,11 @@ export default function RequestForm() {
               {errors.signature && <p className="text-xs text-red-500 mt-1">{errors.signature}</p>}
             </div>
 
-            {/* Signature File Upload (for EMERGENCY requests) */}
+            {/* Signature File Upload (for EMERGENCY requests only) */}
+            {leaveType === 'EMERGENCY' && (
             <div>
               <label className="block text-xs font-semibold tracking-[0.1px] text-stone-500 uppercase mb-2">
-                Digital Signature File (for Emergency Leave)
+                Digital Signature File <span className="text-red-500">*</span>
               </label>
               <label className="flex items-center gap-3 bg-stone-50 border border-stone-200 border-dashed rounded-xl px-4 py-4 cursor-pointer hover:bg-stone-100 transition">
                 <div className="w-8 h-8 bg-stone-200 rounded-lg flex items-center justify-center shrink-0">
@@ -436,6 +442,7 @@ export default function RequestForm() {
                 />
               </label>
             </div>
+            )}
           </div>
  
           {/* Action Buttons */}

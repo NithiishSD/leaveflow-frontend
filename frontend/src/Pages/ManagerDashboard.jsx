@@ -13,7 +13,7 @@ const ManagerDashboard = () => {
       <Sidebar name = 'dashboard'/>
       
       <main className="flex-1 px-4 md:px-6 py-4 md:py-6 overflow-y-auto">
-        <HeaderBar/>
+        <HeaderBar title = 'Dashboard'/>
 
         <section className="mt-6 bg-white rounded-2xl shadow-sm p-8">
           <h2 className="text-xl font-bold text-gray-900 tracking-[0.1px] mb-2">Leave Requests</h2>
@@ -33,8 +33,8 @@ const ManagerDashboard = () => {
             <div className="text-gray-400 font-medium py-10 animate-pulse tracking-[0.1px]">Loading requests...</div>
           ) : (
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-              {requests.length > 0 ? (
-                requests.map(req => <RequestCard key={req.id} req={req} />)
+              {requests.filter(req => req.status === 'PENDING_MANAGER').length > 0 ? (
+                requests.filter(req => req.status === 'PENDING_MANAGER').map(req => <RequestCard key={req.id} req={req} />)
               ) : (
                 <div className="col-span-full py-10 text-center text-gray-500 font-medium bg-gray-50 rounded-xl tracking-[0.1px]">
                   No requests pending your approval.

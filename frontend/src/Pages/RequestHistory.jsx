@@ -3,6 +3,7 @@ import {useLeave} from '../components/LeaveContext.jsx'
 import Sidebar from '../components/Sidebar.jsx'
 import HeaderBar from '../components/HeaderBar.jsx'
 import RequestDetailsModal from '../components/RequestDetailsModal.jsx'
+import { AlertCircle } from 'lucide-react'
 
 export default function RequestHistory(){
     const {allRequests, handleAction, loading} = useLeave();
@@ -11,6 +12,15 @@ export default function RequestHistory(){
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
     const [statusFilter, setStatusFilter] = useState('all');
     const [leaveTypeFilter, setLeaveTypeFilter] = useState('all');
+    const [errorPopup, setErrorPopup] = useState({ show: false, message: '' });
+
+    const handleActionWithError = async (id, actionType) => {
+      const result = await handleAction(id, actionType);
+      if (!result.success) {
+        setErrorPopup({ show: true, message: result.error });
+        setTimeout(() => setErrorPopup({ show: false, message: '' }), 5000);
+      }
+    };
 
     // Filter requests that need approval
     const requestsNeedingApproval = (allRequests || []).filter(req => 
@@ -44,7 +54,7 @@ export default function RequestHistory(){
 
     const handleMassApprove = async () => {
         for (const id of selectedRows) {
-            await handleAction(id, 'approve');
+            await handleActionWithError(id, 'approve');
         }
         setSelectedRows(new Set());
     };
@@ -52,7 +62,7 @@ export default function RequestHistory(){
     const handleMassDeny = async () => {
         if (window.confirm(`Deny ${selectedRows.size} request(s)?`)) {
             for (const id of selectedRows) {
-                await handleAction(id, 'deny');
+                await handleActionWithError(id, 'deny');
             }
             setSelectedRows(new Set());
         }
@@ -61,7 +71,7 @@ export default function RequestHistory(){
     const handleMassReturn = async () => {
         if (window.confirm(`Return ${selectedRows.size} request(s) for fixes?`)) {
             for (const id of selectedRows) {
-                await handleAction(id, 'return');
+                await handleActionWithError(id, 'return');
             }
             setSelectedRows(new Set());
         }
@@ -188,16 +198,11 @@ export default function RequestHistory(){
                                     </tr>
                                 ) : (
                                     filteredRequests.map((req) => (
-                                        <tr 
-                                            key={req.id} 
-                                            className={`hover:bg-gray-50 transition-colors cursor-pointer ${
+                                        <tr key={req.id} className={`hover:bg-gray-50 transition-colors cursor-pointer ${
                                                 selectedRows.has(req.id) ? 'bg-blue-50' : ''
-                                            }`}
-                                            onClick={() => {
+                                            }`} onClick={() => {
                                                 setSelectedRequest(req);
-                                                setIsDetailsOpen(true);
-                                            }}
-                                        >
+                                                setIsDetailsOpen(true);}}>
                                             <td className="px-4 py-4 text-sm text-gray-600 font-medium tracking-[0.1px]" onClick={(e) => e.stopPropagation()}>
                                                 <input 
                                                     type="checkbox" 
@@ -244,18 +249,34 @@ export default function RequestHistory(){
                         isOpen={isDetailsOpen}
                         onClose={() => setIsDetailsOpen(false)}
                         onApprove={(id) => {
-                            handleAction(id, 'approve');
+                            handleActionWithError(id, 'approve');
                             setIsDetailsOpen(false);
                         }}
                         onReject={(id) => {
-                            handleAction(id, 'deny');
+                            handleActionWithError(id, 'deny');
                             setIsDetailsOpen(false);
                         }}
                         onReturn={(id) => {
-                            handleAction(id, 'return');
+                            handleActionWithError(id, 'return');
                             setIsDetailsOpen(false);
                         }}
                     />
+                )}
+
+                {errorPopup.show && (
+                  <div className="fixed top-4 right-4 z-50 flex items-start gap-3 p-4 bg-red-50 border-2 border-red-200 rounded-lg shadow-lg min-w-80 animate-pulse">
+                    <AlertCircle className="text-red-600 flex-shrink-0 mt-0.5" size={20} />
+                    <div className="flex-1">
+                      <p className="text-red-800 font-semibold text-sm tracking-[0.1px]">Cannot Approve Request</p>
+                      <p className="text-red-700 text-xs mt-1 tracking-[0.1px]">{errorPopup.message}</p>
+                    </div>
+                    <button
+                      onClick={() => setErrorPopup({ show: false, message: '' })}
+                      className="text-red-600 hover:text-red-800 font-bold text-lg flex-shrink-0"
+                    >
+                      ✕
+                    </button>
+                  </div>
                 )}
             </main>
         </div>

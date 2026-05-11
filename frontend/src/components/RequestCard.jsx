@@ -1,10 +1,21 @@
 import React, { useState } from 'react';
 import { useLeave } from './LeaveContext';
 import RequestDetailsModal from './RequestDetailsModal';
+import { AlertCircle } from 'lucide-react';
 
 const RequestCard = ({ req }) => {
   const { handleAction } = useLeave();
   const [isOpen, setIsOpen] = useState(false);
+  const [errorPopup, setErrorPopup] = useState({ show: false, message: '' });
+
+  const handleActionWithError = async (id, actionType) => {
+    const result = await handleAction(id, actionType);
+    if (!result.success) {
+      setErrorPopup({ show: true, message: result.error });
+      setTimeout(() => setErrorPopup({ show: false, message: '' }), 5000);
+    }
+  };
+
   const getDotColor = (type) => {
     const t = (type || '').toString().toUpperCase();
     if (t === 'EMERGENCY') return 'bg-red-500';
@@ -57,13 +68,13 @@ const RequestCard = ({ req }) => {
       </div>
       <div className="flex justify-end items-center gap-3">
         <button 
-          onClick={() => handleAction(req.id, 'deny')}
+          onClick={() => handleActionWithError(req.id, 'deny')}
           className="px-3 py-1 bg-[#fbcfe8] text-[#be123c] rounded text-xs font-medium hover:bg-pink-300 transition-colors tracking-[0.1px]"
         >
           Deny
         </button>
         <button 
-          onClick={() => handleAction(req.id, 'approve')}
+          onClick={() => handleActionWithError(req.id, 'approve')}
           className="px-3 py-1 bg-[#bbf7d0] text-[#15803d] rounded text-xs font-medium hover:bg-green-300 transition-colors tracking-[0.1px]"
         >
           Approve
@@ -73,20 +84,36 @@ const RequestCard = ({ req }) => {
         </button>
       </div>
 
+      {errorPopup.show && (
+        <div className="fixed top-4 right-4 z-50 flex items-start gap-3 p-4 bg-red-50 border-2 border-red-200 rounded-lg shadow-lg min-w-80 animate-pulse">
+          <AlertCircle className="text-red-600 flex-shrink-0 mt-0.5" size={20} />
+          <div className="flex-1">
+            <p className="text-red-800 font-semibold text-sm tracking-[0.1px]">Cannot Approve Request</p>
+            <p className="text-red-700 text-xs mt-1 tracking-[0.1px]">{errorPopup.message}</p>
+          </div>
+          <button
+            onClick={() => setErrorPopup({ show: false, message: '' })}
+            className="text-red-600 hover:text-red-800 font-bold text-lg flex-shrink-0"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
       <RequestDetailsModal 
         req={req}
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         onApprove={(id) => {
-          handleAction(id, 'approve');
+          handleActionWithError(id, 'approve');
           setIsOpen(false);
         }}
         onReject={(id) => {
-          handleAction(id, 'deny');
+          handleActionWithError(id, 'deny');
           setIsOpen(false);
         }}
         onReturn={(id) => {
-          handleAction(id, 'return');
+          handleActionWithError(id, 'return');
           setIsOpen(false);
         }}
       />

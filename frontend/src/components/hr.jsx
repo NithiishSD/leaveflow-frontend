@@ -112,6 +112,7 @@ export default function HR() {
           console.log('Calculated stats:', calculatedStats);
         } catch (error) {
           console.log('Error fetching HR dashboard data:', error);
+          setAllRequests([]);
         } finally {
           setLoading(false);
         }
@@ -139,13 +140,13 @@ export default function HR() {
       </section>
       
       <section className="mt-6 bg-white rounded-2xl shadow-sm p-8 mb-6">
-          <h3 className="text-xl font-bold text-gray-900 mb-6 tracking-[0.1px]">Quick Approval</h3>
+          <h3 className="text-xl font-bold text-gray-900 mb-6 tracking-[0.1px]">Requests Awaiting Approval</h3>
           {loading ? (
             <div className="text-gray-400 font-medium py-10 animate-pulse tracking-[0.1px]">Loading requests...</div>
           ) : (
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-              {requests.length > 0 ? (
-                requests.map(req => <RequestCard key={req.id} req={req} />)
+              {requests.filter(req => req.status === 'PENDING_HR').length > 0 ? (
+                requests.filter(req => req.status === 'PENDING_HR').map(req => <RequestCard key={req.id} req={req} />)
               ) : (
                 <div className="col-span-full py-10 text-center text-gray-500 font-medium bg-gray-50 rounded-xl tracking-[0.1px]">
                   No requests pending your approval.
